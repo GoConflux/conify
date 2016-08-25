@@ -21,19 +21,27 @@ module Conify
     end
 
     def provision
-
+      # Make a test POST to base_url
     end
 
     def deprovision
-
+      # Make a test DELETE to base_url
     end
 
     def change_plan
-
+      # Make a test PUT to base_url
     end
 
     def sso
+      # Make a test GET to sso_url
+    end
 
+    def base_url
+      url_for_key('base_url')
+    end
+
+    def sso_url
+      url_for_key('sso_url')
     end
 
     def url_for_key(key)

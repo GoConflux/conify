@@ -24,8 +24,7 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
   end
 
   def test
-    is_prod = @args[0] === '--production'
-    Conify::Tests.perform(is_prod)
+    Conify::Tests.perform(@args[0] === '--production')
   end
 
   def submit
