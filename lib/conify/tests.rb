@@ -7,17 +7,10 @@ module Conify
 
     def perform(is_prod = false)
       @is_prod = is_prod
-
-      begin
-        provision
-        deprovision
-        change_plan
-        sso
-
-        display "Tests Passed!"
-      rescue Exception => e
-        display "Tests Failed with Error: #{e.message}"
-      end
+      provision
+      deprovision
+      change_plan
+      sso
     end
 
     def provision

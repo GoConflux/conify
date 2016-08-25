@@ -24,7 +24,12 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
   end
 
   def test
-    Conify::Tests.perform(@args[0] === '--production')
+    begin
+      Conify::Tests.perform(@args[0] === '--production')
+      display 'Tests Passed!'
+    rescue Exception => e
+      display "Tests Failed with Error: #{e.message}"
+    end
   end
 
   def submit

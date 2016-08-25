@@ -29,7 +29,8 @@ module Conify
       "base_url": "http://localhost:#{port}/conflux/resources",
       "sso_url": "http://localhost:#{port}/sso/login"
     }
-  }
+  },
+  "plans": []
 }
       JSON
     end
