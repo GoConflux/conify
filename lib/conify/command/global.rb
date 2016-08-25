@@ -1,6 +1,6 @@
 require 'conify/command/abstract_command'
 require 'conify/manifest'
-require 'conify/tests'
+require 'conify/api/tests'
 require 'conify/api/users'
 require 'conify/api/services'
 
@@ -25,7 +25,7 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
 
   def test
     begin
-      Conify::Tests.perform(@args[0] === '--production')
+      Conify::Api::Tests.new.perform(@args[0] === '--production')
       display 'Tests Passed!'
     rescue Exception => e
       display "Tests Failed with Error: #{e.message}"
