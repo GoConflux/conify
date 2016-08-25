@@ -203,5 +203,9 @@ module Conify
       'conflux-manifest.json'
     end
 
+    def manifest_content
+      JSON.parse(File.read(manifest_path)) rescue {}
+    end
+
   end
 end

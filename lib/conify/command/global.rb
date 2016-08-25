@@ -1,5 +1,6 @@
 require 'conify/command/abstract_command'
 require 'conify/manifest'
+require 'conify/tests'
 require 'conify/api/users'
 require 'conify/api/services'
 
@@ -23,7 +24,8 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
   end
 
   def test
-
+    is_prod = @args[0] === '--production'
+    Conify::Tests.perform(is_prod)
   end
 
   def submit
@@ -32,9 +34,6 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
       error "No Conflux manifest exists yet.\nRun 'conflux init' to create a new manifest."
     end
 
-    # Get manifest info
-    manifest = JSON.parse(File.read(manifest_path)) rescue {}
-
     # Request Conflux email/password creds
     creds = ask_for_conflux_creds
 
@@ -42,7 +41,7 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
     auth_resp = Conify::Api::Users.new.login(creds)
 
     # Submit new service to Conflux
-    Conify::Api::Services.new.submit(manifest, auth_resp['token'])
+    Conify::Api::Services.new.submit(manifest_content, auth_resp['token'])
 
     display 'Submitted new service to Conflux!'
   end
