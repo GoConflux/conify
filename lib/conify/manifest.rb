@@ -4,6 +4,8 @@ module Conify
   module Manifest
     extend self
 
+    REGIONS = ['us']
+
     def password_gen(size = 8)
       SecureRandom.hex(size)
     end
