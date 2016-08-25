@@ -1,18 +1,20 @@
 require 'conify/command/abstract_command'
 require 'conify/manifest'
+require 'conify/api/users'
+require 'conify/api/services'
 
 class Conify::Command::Global < Conify::Command::AbstractCommand
 
   def init
     if File.exists?(manifest_path)
-      error 'File conflux-manifest.json already exists.'
+      error "File #{manifest_filename} already exists."
     else
       begin
         File.open(manifest_path, 'w+') do |f|
           f.write(Conify::Manifest.template)
         end
 
-        display 'Created new manifest at conflux-manifest.json'
+        display "Created new manifest at #{manifest_filename}"
       rescue Exception => e
         File.delete(manifest_path)
         display "Error initializing conify manifest: #{e.message}"
@@ -24,12 +26,25 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
 
   end
 
-  def setup
+  def submit
+    # First ensure manifest exists
+    if !File.exists?(manifest_path)
+      error "No Conflux manifest exists yet.\nRun 'conflux init' to create a new manifest."
+    end
 
-  end
+    # Get manifest info
+    manifest = JSON.parse(File.read(manifest_path)) rescue {}
 
-  def push
+    # Request Conflux email/password creds
+    creds = ask_for_conflux_creds
 
+    # Login to Conflux with these creds, returning a valid user-token
+    auth_resp = Conify::Api::Users.new.login(creds)
+
+    # Submit new service to Conflux
+    Conify::Api::Services.new.submit(manifest, auth_resp['token'])
+
+    display 'Submitted new service to Conflux!'
   end
 
   #----------------------------------------------------------------------------
@@ -42,17 +57,12 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
     end
 
     module Test
-      DESCRIPTION = 'Test Description'
-      VALID_ARGS = [ [] ]
+      DESCRIPTION = 'Test that your Conflux endpoints are set up correctly'
+      VALID_ARGS = [ [], ['--production'] ]
     end
 
-    module Setup
-      DESCRIPTION = 'Setup Description'
-      VALID_ARGS = [ [] ]
-    end
-
-    module Push
-      DESCRIPTION = 'Push Description'
+    module Submit
+      DESCRIPTION = 'Submit new service to Conflux'
       VALID_ARGS = [ [] ]
     end
 

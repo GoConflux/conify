@@ -8,7 +8,7 @@ module Conify
     extend Conify::Helpers
     extend self
 
-    CMD_BLACKLIST = ['BUNDLE', 'SERVICE', 'TEAM', 'EMAIL', 'HEROKU_APP', 'NEW_BUNDLE']
+    CMD_BLACKLIST = []
 
     # Finds file/method for command
     def find_command(cmd, args = [])

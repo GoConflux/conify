@@ -8,6 +8,10 @@ module Conify
       SecureRandom.hex(size)
     end
 
+    def port
+      3000
+    end
+
     def template
       <<-JSON
 {
@@ -22,8 +26,8 @@ module Conify
       "sso_url": "https://yourapp.com/sso/login"
     },
     "test": {
-      "base_url": "http://localhost:#{@port}/conflux/resources",
-      "sso_url": "http://localhost:#{@port}/sso/login"
+      "base_url": "http://localhost:#{port}/conflux/resources",
+      "sso_url": "http://localhost:#{port}/sso/login"
     }
   }
 }

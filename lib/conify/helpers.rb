@@ -111,6 +111,51 @@ module Conify
       RUBY_PLATFORM =~ /-darwin\d/
     end
 
+    def ask_for_password_on_windows
+      require 'Win32API'
+      char = nil
+      password = ''
+
+      while char = Win32API.new('msvcrt', '_getch', [ ], 'L').Call do
+        break if char == 10 || char == 13 # received carriage return or newline
+        if char == 127 || char == 8 # backspace and delete
+          password.slice!(-1, 1)
+        else
+          # windows might throw a -1 at us so make sure to handle RangeError
+          (password << char.chr) rescue RangeError
+        end
+      end
+
+      puts
+      password
+    end
+
+    def ask_for_password
+      begin
+        echo_off  # make the password input hidden
+        password = allow_user_response
+        puts
+      ensure
+        echo_on  # flip input visibility back on
+      end
+
+      password
+    end
+
+    # Hide user input
+    def echo_off
+      with_tty do
+        system 'stty -echo'
+      end
+    end
+
+    # Show user input
+    def echo_on
+      with_tty do
+        system 'stty echo'
+      end
+    end
+
     def with_tty(&block)
       return unless $stdin.isatty
       begin
@@ -120,34 +165,20 @@ module Conify
       end
     end
 
-    def home_directory
-      if running_on_windows?
-        # This used to be File.expand_path("~"), which should have worked but there was a bug
-        # when a user has a cyrillic character in their username.  Their username gets mangled
-        # by a C code operation that does not respect multibyte characters
-        #
-        # see: https://github.com/ruby/ruby/blob/v2_2_3/win32/file.c#L47
-        home = Conify::Helpers::Env['HOME']
-        homedrive = Conify::Helpers::Env['HOMEDRIVE']
-        homepath = Conify::Helpers::Env['HOMEPATH']
-        userprofile = Conify::Helpers::Env['USERPROFILE']
+    def ask_for_conflux_creds
+      # Ask for Conflux Credentials
+      puts 'Enter your Conflux credentials.'
 
-        home_dir = if home
-            home
-          elsif homedrive && homepath
-            homedrive + homepath
-          elsif userprofile
-            userprofile
-          else
-            # The expanding `~' error here does not make much sense
-            # just made it match File.expand_path when no env set
-            raise ArgumentError.new("couldn't find HOME environment -- expanding `~'")
-          end
+      # Email:
+      print 'Email: '
+      email = allow_user_response
 
-        home_dir.gsub(/\\/, '/')
-      else
-        Dir.home
-      end
+      # Password
+      print 'Password (typing will be hidden): '
+
+      password = running_on_windows? ? ask_for_password_on_windows : ask_for_password
+
+      { email: email, password: password }
     end
 
     # Strip the protocol + following slashes off of a url
@@ -159,21 +190,17 @@ module Conify
       ENV['CONFLUX_HOST'] || 'https://api.goconflux.com'
     end
 
-    def is_rails_project?
-      File.exists?(File.join(Dir.pwd, 'Gemfile'))
-    end
-
-    def is_node_project?
-      File.exists?(File.join(Dir.pwd, 'package.json'))
-    end
-
     # Get an array (of symbols) of the user-defined methods for a klass
     def manually_added_methods(klass)
       klass.instance_methods(false)
     end
 
     def manifest_path
-      File.join(Dir.pwd, 'conflux-manifest.json')
+      File.join(Dir.pwd, manifest_filename)
+    end
+
+    def manifest_filename
+      'conflux-manifest.json'
     end
 
   end
