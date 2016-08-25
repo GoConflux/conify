@@ -1,6 +1,6 @@
 require 'conify/api/abstract_api'
 
-class Conify::Api::SubCommand < Conify::Api::AbstractApi
+class Conify::Api::Subcommand < Conify::Api::AbstractApi
 
   def extension
     '/myextension'

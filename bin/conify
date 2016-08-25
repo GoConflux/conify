@@ -13,7 +13,7 @@ class Gem::Specification
 end
 
 # Create way to set config vars during development --> put them in configs.yml inside root of this project
-config_vars_path = File.join(File.expand_path('../', lib_path), 'configs.yml')
+config_vars_path = File.expand_path(File.dirname(__FILE__) + '/../configs.yml')
 
 if File.exists?(config_vars_path)
   require 'yaml'

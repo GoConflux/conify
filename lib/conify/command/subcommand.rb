@@ -1,6 +1,6 @@
 require 'conify/command/abstract_command'
 
-class Conify::Command::SubCommand < Conify::Command::AbstractCommand
+class Conify::Command::Subcommand < Conify::Command::AbstractCommand
 
   def index
   end
