@@ -2,15 +2,43 @@ require 'conify/command/abstract_command'
 
 class Conify::Command::Global < Conify::Command::AbstractCommand
 
-  def one
+  def init
+
+  end
+
+  def test
+
+  end
+
+  def setup
+
+  end
+
+  def push
+
   end
 
   #----------------------------------------------------------------------------
 
   module CommandInfo
 
-    module One
-      DESCRIPTION = 'One Description'
+    module Init
+      DESCRIPTION = 'Init Description'
+      VALID_ARGS = [ [] ]
+    end
+
+    module Test
+      DESCRIPTION = 'Test Description'
+      VALID_ARGS = [ [] ]
+    end
+
+    module Setup
+      DESCRIPTION = 'Setup Description'
+      VALID_ARGS = [ [] ]
+    end
+
+    module Push
+      DESCRIPTION = 'Push Description'
       VALID_ARGS = [ [] ]
     end
 
