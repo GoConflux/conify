@@ -1,9 +1,23 @@
 require 'conify/command/abstract_command'
+require 'conify/manifest'
 
 class Conify::Command::Global < Conify::Command::AbstractCommand
 
   def init
+    if File.exists?(manifest_path)
+      error 'File conflux-manifest.json already exists.'
+    else
+      begin
+        File.open(manifest_path, 'w+') do |f|
+          f.write(Conify::Manifest.template)
+        end
 
+        display 'Created new manifest at conflux-manifest.json'
+      rescue Exception => e
+        File.delete(manifest_path)
+        display "Error initializing conify manifest: #{e.message}"
+      end
+    end
   end
 
   def test
@@ -23,7 +37,7 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
   module CommandInfo
 
     module Init
-      DESCRIPTION = 'Init Description'
+      DESCRIPTION = 'Create a new manifest describing your service'
       VALID_ARGS = [ [] ]
     end
 

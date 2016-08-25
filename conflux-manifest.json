@@ -1,0 +1,17 @@
+{
+  "id": "myservice",
+  "api": {
+    "config_vars": [ "MYSERVICE_URL" ],
+    "password": "6b905f662e0ef71c",
+    "sso_salt": "bf77362699039294",
+    "regions": ["us"],
+    "production": {
+      "base_url": "https://yourapp.com/conflux/resources",
+      "sso_url": "https://yourapp.com/sso/login"
+    },
+    "test": {
+      "base_url": "http://localhost:/conflux/resources",
+      "sso_url": "http://localhost:/sso/login"
+    }
+  }
+}

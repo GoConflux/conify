@@ -172,5 +172,9 @@ module Conify
       klass.instance_methods(false)
     end
 
+    def manifest_path
+      File.join(Dir.pwd, 'conflux-manifest.json')
+    end
+
   end
 end
