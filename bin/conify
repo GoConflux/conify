@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
+$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
+
+# Fixes https://github.com/rubygems/rubygems/issues/1420
+require 'rubygems/specification'
+
+class Gem::Specification
+  def this
+    self
+  end
+end
+
+# Create way to set config vars during development --> put them in configs.yml inside root of this project
+config_vars_path = File.join(File.expand_path('../', lib_path), 'configs.yml')
+
+if File.exists?(config_vars_path)
+  require 'yaml'
+
+  configs = YAML::load_file(config_vars_path) rescue {}
+
+  (configs || {}).each { |key, val|
+    ENV[key] = val if !ENV.key?(key)
+  }
+end
+
+require 'conify/cli'
+
+Conify::CLI.start!(*ARGV)
