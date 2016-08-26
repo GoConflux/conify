@@ -30,11 +30,11 @@ module Conify
     "regions": ["us"],
     "production": {
       "base_url": "https://yourapp.com/conflux/resources",
-      "sso_url": "https://yourapp.com/sso/login"
+      "sso_url": "https://yourapp.com/conflux/sso"
     },
     "test": {
       "base_url": "http://localhost:#{port}/conflux/resources",
-      "sso_url": "http://localhost:#{port}/sso/login"
+      "sso_url": "http://localhost:#{port}/conflux/sso"
     }
   },
   "plans": []

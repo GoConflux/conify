@@ -480,9 +480,9 @@ module Conify
     end
 
     def call!
-      error("need an sso salt to perform sso test") unless data['api']['sso_salt']
+      error "Need an sso salt to perform sso test" unless data['api']['sso_salt']
 
-      sso  = Sso.new(data)
+      sso = Sso.new(data)
       verb = sso.POST? ? 'POST' : 'GET'
       test "#{verb} #{sso.path}"
 
