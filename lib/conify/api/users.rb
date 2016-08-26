@@ -6,9 +6,9 @@ class Conify::Api::Users < Conify::Api::AbstractApi
     '/users'
   end
 
-  # Get a user token in exchange for email/password
+  # Exchange email/password for Conflux user_token
   def login(creds)
-    get("#{extension}/token_for_creds", data: creds)
+    post("#{extension}/login", data: creds)
   end
 
 end

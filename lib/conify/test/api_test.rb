@@ -14,7 +14,7 @@ class Conify::ApiTest < Conify::Test
   end
 
   def conflux_id
-    "app#{rand(10000)}@kensa.conflux.com"
+    "app#{rand(10000)}@conify.conflux.com"
   end
 
   def credentials

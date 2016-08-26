@@ -1,6 +1,7 @@
 require 'conify/command/abstract_command'
 require 'conify/manifest'
 require 'conify/test/all_test'
+require 'conify/test/manifest_test'
 require 'conify/api/users'
 require 'conify/api/services'
 
@@ -33,8 +34,8 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
       data['env'] = (@args[1] === '--production') ? 'production' : 'test'
 
       # Run all tests to ensure Conflux integration is set up correctly
-      all_tests = Conify::AllTest.new(data)
-      exit(1) if !all_tests.call
+      all_tests_valid = Conify::AllTest.new(data).call
+      exit(1) unless all_tests_valid
 
       display 'Everything checks out!'
     rescue Exception => e
@@ -42,11 +43,15 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
     end
   end
 
-  def submit
+  def push
     # First ensure manifest exists
     if !File.exists?(manifest_path)
       error "No Conflux manifest exists yet.\nRun 'conflux init' to create a new manifest."
     end
+
+    # Run Manifest Test to ensure file is valid
+    manifest_valid = Conify::ManifestTest.new(manifest_content).call
+    exit(1) unless manifest_valid
 
     # Request Conflux email/password creds
     creds = ask_for_conflux_creds
@@ -54,10 +59,12 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
     # Login to Conflux with these creds, returning a valid user-token
     auth_resp = Conify::Api::Users.new.login(creds)
 
-    # Submit new service to Conflux
-    Conify::Api::Services.new.submit(manifest_content, auth_resp['token'])
+    puts "USER TOKEN: #{auth_resp['user_token']}"
 
-    display 'Submitted new service to Conflux!'
+    Push new service to Conflux
+    push_resp = Conify::Api::Services.new.push(manifest_content, auth_resp['user_token'])
+
+    display "Successfully pushed draft service to Conflux!\nVisit #{push_resp['url']} to complete the submission process."
   end
 
   #----------------------------------------------------------------------------
@@ -74,8 +81,8 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
       VALID_ARGS = [ [], ['--production'] ]
     end
 
-    module Submit
-      DESCRIPTION = 'Submit your service to Conflux'
+    module Push
+      DESCRIPTION = 'Push your draft service to Conflux'
       VALID_ARGS = [ [] ]
     end
 
