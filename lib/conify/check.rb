@@ -7,7 +7,7 @@ require 'conify/http'
 require 'conify/manifest'
 require 'conify/helpers'
 require 'conify/okjson'
-require 'pry'
+require 'conflux/sso'
 
 # Most all this code taken from https://github.com/heroku/kensa/blob/master/lib/heroku/kensa/check.rb
 
@@ -522,8 +522,7 @@ module Conify
 
       run PlanChangeCheck, data
       run DeprovisionCheck, data
-
-      # Run sso check too
+      run SsoCheck, data
     end
 
     def run_in_env(env)
