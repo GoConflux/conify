@@ -1,11 +1,12 @@
 require 'restclient'
 require 'conify/okjson'
 
+# Used for making http requests when testing Conflux compatibility
 module Conify
-  module HTTPForChecks
+  module HTTPForTests
 
     def get(path, params={})
-      path = "#{path}?" + params.map { |k, v| "#{k}=#{v}" }.join("&") unless params.empty?
+      path = "#{path}?" + params.map { |k, v| "#{k}=#{v}" }.join('&') unless params.empty?
       request(:get, [], path)
     end
 
@@ -21,30 +22,28 @@ module Conify
       request(:delete, credentials, path, payload)
     end
 
-    def request(meth, credentials, path, payload=nil)
+    def request(method, credentials, path, payload=nil)
       code = nil
       body = nil
 
       begin
-        args = [
-          { :accept => "application/json" }
-        ]
+        args = [{ accept: 'application/json' }]
 
         if payload
-          args.first[:content_type] = "application/json"
+          args.first[:content_type] = 'application/json'
           args.unshift(payload.to_json)
         end
 
         user, pass = credentials
         body = RestClient::Resource.new(url, user: user, password: pass, verify_ssl: false)[path].send(
-          meth,
+          method,
           *args
         ).to_s
 
         code = 200
-      rescue RestClient::ExceptionWithResponse => boom
-        code = boom.http_code
-        body = boom.http_body
+      rescue RestClient::ExceptionWithResponse => e
+        code = e.http_code
+        body = e.http_body
       rescue Errno::ECONNREFUSED
         code = -1
         body = nil

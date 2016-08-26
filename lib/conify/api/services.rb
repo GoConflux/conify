@@ -6,8 +6,9 @@ class Conify::Api::Services < Conify::Api::AbstractApi
     '/services'
   end
 
+  # Submit service to Conflux
   def submit(manifest, token)
-    get("#{extension}/endpoint", data: manifest, headers: { 'Conflux-User' => token })
+    get("#{extension}/submit", data: manifest, headers: { 'Conflux-User' => token })
   end
 
 end

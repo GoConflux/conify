@@ -10,7 +10,7 @@ module Conify
       SecureRandom.hex(size)
     end
 
-    def port
+    def default_port
       3000
     end
 
@@ -33,8 +33,8 @@ module Conify
       "sso_url": "https://yourapp.com/conflux/sso"
     },
     "test": {
-      "base_url": "http://localhost:#{port}/conflux/resources",
-      "sso_url": "http://localhost:#{port}/conflux/sso"
+      "base_url": "http://localhost:#{default_port}/conflux/resources",
+      "sso_url": "http://localhost:#{default_port}/conflux/sso"
     }
   },
   "plans": []

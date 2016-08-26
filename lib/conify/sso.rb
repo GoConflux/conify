@@ -3,29 +3,26 @@ require 'uri'
 
 module Conify
   class Sso
-    attr_accessor :id, :url, :proxy_port, :timestamp, :token
+    attr_accessor :uuid, :url, :proxy_port, :timestamp, :token
 
     def initialize(data)
-      @id   = data[:id]
+      @uuid = data[:id]
       @salt = data['api']['sso_salt']
+      env = data.fetch(:env, 'test')
 
-      env   = data.fetch :env, 'test'
       if @url = data['api'][env]['sso_url']
-        @use_post   = true
+        @use_post = true
         @proxy_port = find_available_port
       else
-        @url  = data["api"][env].chomp('/')
+        @url = data['api'][env].chomp('/')
       end
+
       @timestamp  = Time.now.to_i
       @token = make_token(@timestamp)
     end
 
     def path
-      if self.POST?
-        URI.parse(url).path
-      else
-        "/conflux/resources/#{id}"
-      end
+      self.POST? ? URI.parse(url).path : "/conflux/resources/#{uuid}"
     end
 
     def POST?
@@ -33,11 +30,7 @@ module Conify
     end
 
     def sso_url
-      if self.POST?
-        "http://localhost:#{@proxy_port}/"
-      else
-        full_url
-      end
+      self.POST? ? "http://localhost:#{@proxy_port}/" : full_url
     end
 
     def full_url
@@ -55,7 +48,7 @@ module Conify
     end
 
     def make_token(t)
-      Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
+      Digest::SHA1.hexdigest([@uuid, @salt, t].join(':'))
     end
 
     def querystring
@@ -68,13 +61,14 @@ module Conify
     end
 
     def query_params
-      { 'token'     => @token,
+      {
+        'token' => @token,
         'timestamp' => @timestamp.to_s,
-        'nav-data'  => sample_nav_data,
-        'email'     => 'username@example.com',
-        'app'       => 'myapp'
+        'nav-data' => sample_nav_data,
+        'email' => 'username@example.com',
+        'app' => 'myapp'
       }.tap do |params|
-        params.merge!('id' => @id) if self.POST?
+        params.merge!('uuid' => @uuid) if self.POST?
       end
     end
 
@@ -85,9 +79,10 @@ module Conify
         'addons' => [
           { 'slug' => 'cron', 'name' => 'Cron' },
           { 'slug' => 'custom_domains+wildcard', 'name' => 'Custom Domains + Wildcard' },
-          { 'slug' => 'youraddon', 'name' => 'Your Addon', 'current' => true },
+          { 'slug' => 'youraddon', 'name' => 'Your Addon', 'current' => true }
         ]
       })
+
       base64_url_variant(json)
     end
 
@@ -104,11 +99,6 @@ module Conify
       end
     end
 
-    def start
-      run_proxy
-      self
-    end
-
     def find_available_port
       server = TCPServer.new('127.0.0.1', 0)
       server.addr[1]
@@ -116,16 +106,5 @@ module Conify
       server.close if server
     end
 
-    def run_proxy
-      return unless self.POST?
-      server = PostProxy.new self
-      @proxy = server
-
-      trap("INT") { server.stop }
-      pid = fork do
-        server.start
-      end
-      at_exit { server.stop; Process.waitpid pid }
-    end
   end
 end

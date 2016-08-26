@@ -5,6 +5,7 @@ require 'net/https'
 require 'uri'
 require 'json'
 
+# Used to make requests to the Conflux API
 class Conify::Api::AbstractApi
   include Conify::Helpers
 

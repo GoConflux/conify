@@ -70,35 +70,6 @@ module Conify
       table
     end
 
-    # Ask a free response question with a optional prefix (prefix example --> 'Password: ')
-    def ask_free_response_question(question, answer_prefix = '')
-      puts question
-      print answer_prefix
-      response = allow_user_response
-      response
-    end
-
-    # Ask a multiple choice question, with numbered answers
-    def ask_mult_choice_question(question, answers)
-      answer = nil
-
-      # Prompt will continue until user has responded with one of the numbers next to an answer
-      until !answer.nil? && answer.is_a?(Integer)
-        puts question
-        answers.each_with_index { |answer, i| puts "(#{i + 1}) #{answer}" }
-        puts ''
-
-        response = allow_user_response
-
-        answer = answers.index(response) if answers.include?(response) rescue nil
-        answer = (response.to_i - 1) if !answers[response.to_i - 1].nil? rescue nil
-
-        question = 'Sorry I didn\'t catch that. Can you respond with the number that appears next to your answer?'
-      end
-
-      answer
-    end
-
     def allow_user_response
       $stdin.gets.to_s.strip
     end
