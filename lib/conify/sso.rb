@@ -17,7 +17,7 @@ module Conify
         @url  = data["api"][env].chomp('/')
       end
       @timestamp  = Time.now.to_i
-      @token      = make_token(@timestamp)
+      @token = make_token(@timestamp)
     end
 
     def path
@@ -80,12 +80,12 @@ module Conify
 
     def sample_nav_data
       json = OkJson.encode({
-        :addon => 'Your Addon',
-        :appname => 'myapp',
-        :addons => [
-          { :slug => 'cron', :name => 'Cron' },
-          { :slug => 'custom_domains+wildcard', :name => 'Custom Domains + Wildcard' },
-          { :slug => 'youraddon', :name => 'Your Addon', :current => true },
+        'addon' => 'Your Addon',
+        'appname' => 'myapp',
+        'addons' => [
+          { 'slug' => 'cron', 'name' => 'Cron' },
+          { 'slug' => 'custom_domains+wildcard', 'name' => 'Custom Domains + Wildcard' },
+          { 'slug' => 'youraddon', 'name' => 'Your Addon', 'current' => true },
         ]
       })
       base64_url_variant(json)
