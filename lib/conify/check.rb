@@ -7,7 +7,7 @@ require 'conify/http'
 require 'conify/manifest'
 require 'conify/helpers'
 require 'conify/okjson'
-require 'conflux/sso'
+require 'conify/sso'
 
 # Most all this code taken from https://github.com/heroku/kensa/blob/master/lib/heroku/kensa/check.rb
 
