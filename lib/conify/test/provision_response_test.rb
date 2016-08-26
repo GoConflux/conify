@@ -88,6 +88,7 @@ class Conify::ProvisionResponseTest < Conify::Test
           end
         end
       end
+
     end
   end
 

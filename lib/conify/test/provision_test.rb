@@ -48,7 +48,7 @@ class Conify::ProvisionTest < Conify::ApiTest
     data[:provision_response] = response
 
     run(Conify::ProvisionResponseTest, data.merge('conflux_id' => conflux_id))
-    run(Conify::DuplicateProvisionTest, data) if !api_requires?('many_per_app')
+    run(Conify::DuplicateProvisionTest, data) unless api_requires?('many_per_app')
   end
 
 end

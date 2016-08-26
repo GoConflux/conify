@@ -8,7 +8,7 @@ module Conify
     def initialize(data)
       @uuid = data[:id]
       @salt = data['api']['sso_salt']
-      env = data.fetch(:env, 'test')
+      env = data.fetch('env', 'test')
 
       if @url = data['api'][env]['sso_url']
         @use_post = true

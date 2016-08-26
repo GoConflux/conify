@@ -31,7 +31,7 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
       # Get the content from conflux-manifest.json and add the 'env'
       # key specifying which environment to test
       data = manifest_content
-      data['env'] = (@args[1] === '--production') ? 'production' : 'test'
+      data['env'] = (@args[0] === '--production') ? 'production' : 'test'
 
       # Run all tests to ensure Conflux integration is set up correctly
       all_tests_valid = Conify::AllTest.new(data).call
@@ -59,9 +59,7 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
     # Login to Conflux with these creds, returning a valid user-token
     auth_resp = Conify::Api::Users.new.login(creds)
 
-    puts "USER TOKEN: #{auth_resp['user_token']}"
-
-    Push new service to Conflux
+    # Push new service to Conflux
     push_resp = Conify::Api::Services.new.push(manifest_content, auth_resp['user_token'])
 
     display "Successfully pushed draft service to Conflux!\nVisit #{push_resp['url']} to complete the submission process."

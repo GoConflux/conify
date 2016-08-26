@@ -11,7 +11,7 @@ module Conify
     end
 
     def env
-      @data.fetch(:env, 'test')
+      @data.fetch('env', 'test')
     end
 
     def test(msg, &block)
@@ -21,7 +21,7 @@ module Conify
     def run(klass, data)
       klass.new(data).call
 
-      if klass.const_get('OUTPUT_COMPLETION')
+      if klass.const_defined?('OUTPUT_COMPLETION') && klass.const_get('OUTPUT_COMPLETION')
         test_name = klass.to_s.gsub('Conify::', '').split(/(?=[A-Z])/).join(' ')
         display "#{test_name}: Looks good..."
       end
