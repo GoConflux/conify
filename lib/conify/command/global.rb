@@ -30,6 +30,8 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
       check = Conify::AllCheck.new(data)
       result = check.call
       exit(1) if !result && !(@options[:test])
+
+      display "Everything checks out!"
     rescue Exception => e
       display e.message
     end

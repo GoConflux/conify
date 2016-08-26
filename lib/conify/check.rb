@@ -38,10 +38,6 @@ module Conify
       klass.new(data).call
     end
 
-    def error(msg)
-      raise CheckError, msg
-    end
-
     def warning(msg)
       display msg
     end
@@ -134,8 +130,13 @@ module Conify
         check "contains config_vars array" do
           data["api"]["config_vars"].is_a?(Array)
         end
+        check "all config vars are hashes" do
+          data["api"]["config_vars"].each do |c|
+            error "Config #{c} is not a hash..." unless c.is_a?(Hash)
+          end
+        end
         check "all config vars are uppercase strings" do
-          data["api"]["config_vars"].each do |k, v|
+          data["api"]["config_vars"].collect{ |c| c["name"] }.each do |k|
             if k =~ /^[A-Z][0-9A-Z_]+$/
               true
             else
@@ -144,7 +145,7 @@ module Conify
           end
         end
         check "all config vars are prefixed with the addon id" do
-          data["api"]["config_vars"].each do |k|
+          data["api"]["config_vars"].collect{ |c| c["name"] }.each do |k|
             prefix = data["api"]["config_vars_prefix"] || data['id'].upcase.gsub('-', '_')
             if k =~ /^#{prefix}_/
               true
@@ -162,7 +163,6 @@ module Conify
   class ProvisionResponseCheck < Check
     def call!
       response = data[:provision_response]
-      test "response"
 
       check "contains an id" do
         response.is_a?(Hash) && response["id"]
@@ -176,44 +176,52 @@ module Conify
         end
       end
 
-      display " (id #{response['id']})"
+      if response.has_key?("configs")
 
-      if response.has_key?("config")
-        test "config data"
-        check "is a hash" do
-          response["config"].is_a?(Hash)
+        check "is an array" do
+          response["configs"].is_a?(Array)
         end
 
         check "all config keys were previously defined in the manifest" do
-          response["config"].keys.each do |key|
-            error "#{key} is not in the manifest" unless data["api"]["config_vars"].include?(key)
+          response_config_keys = response["configs"].collect { |c| c["name"] }
+          manifest_config_keys = data["api"]["config_vars"].collect { |c| c["name"] }
+          diff = response_config_keys - manifest_config_keys
+
+          if !diff.empty?
+            error "The following keys are not in the manifest: #{diff.join(', ')}"
           end
+
           true
         end
 
         check "all keys in the manifest are present" do
-          difference = data['api']['config_vars'] - response['config'].keys
-          unless difference.empty?
-            verb = (difference.size == 1) ? "is" : "are"
-            warning "#{difference.join(', ')} #{verb} missing from the provision response"
+          response_config_keys = response["configs"].collect { |c| c["name"] }
+          manifest_config_keys = data["api"]["config_vars"].collect { |c| c["name"] }
+          diff = manifest_config_keys - response_config_keys
+
+          if !diff.empty?
+            error "The following keys that exist in the manifest were not returned: #{diff.join(', ')}"
           end
+
           true
         end
 
-        check "all config values are strings" do
-          response["config"].each do |k, v|
-            if v.is_a?(String)
-              true
-            else
-              error "the key #{k} doesn't contain a string (#{v.inspect})"
-            end
+        check "all configs are hashes with String 'name' and 'value' keys" do
+          response["configs"].each do |c|
+            error "Config #{c} is not a hash..." unless c.is_a?(Hash)
+            error "Config #{c} does not contain the 'name' key" unless c.key?("name")
+            error "The 'name' key #{c["name"]} is not a string..." unless c["name"].is_a?(String)
+            error "Config #{c} does not contain the 'value' key" unless c.key?("value")
+            error "The 'name' key #{c["value"]} is not a string..." unless c["value"].is_a?(String)
+            true
           end
         end
 
         check "URL configs vars" do
-          response["config"].each do |key, value|
-            next unless key =~ /_URL$/
+          response["configs"].each do |c|
+            next unless c["name"] =~ /_URL$/
             begin
+              value = c["value"]
               uri = URI.parse(value)
               error "#{value} is not a valid URI - missing host" unless uri.host
               error "#{value} is not a valid URI - missing scheme" unless uri.scheme
@@ -509,11 +517,9 @@ module Conify
       run ProvisionCheck, data
 
       response = data[:provision_response]
-
       data.merge!(id: response['id'])
-      configs = response['configs'] || []
-
       data[:plan] ||= 'foo'
+
       run PlanChangeCheck, data
       run DeprovisionCheck, data
 

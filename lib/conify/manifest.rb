@@ -19,7 +19,12 @@ module Conify
 {
   "id": "myservice",
   "api": {
-    "config_vars": [ "MYSERVICE_URL" ],
+    "config_vars": [
+      {
+        "name": "MYSERVICE_URL",
+        "description": "Short config var description"
+      }
+    ],
     "password": "#{password_gen}",
     "sso_salt": "#{password_gen}",
     "regions": ["us"],
