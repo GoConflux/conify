@@ -499,32 +499,9 @@ module Conify
         true
       end
 
-      check "creates the conflux-nav-data cookie" do
-        cookie = agent.cookie_jar.cookies(URI.parse(@sso.full_url)).detect { |c| c.name == 'conflux-nav-data' }
-        error("could not find cookie conflux-nav-data") unless cookie
-        error("expected #{@sso.sample_nav_data}, got #{cookie.value}") unless cookie.value == @sso.sample_nav_data
-        true
-      end
-
-      # Don't check for a Conflux header at this point.
-      # check "displays the conflux layout" do
-      #   if page_logged_in.search('div#conflux-header').empty? &&
-      #     page_logged_in.search('script[src*=boomerang]').empty?
-      #     error("could not find Heroku layout")
-      #   end
-      #   true
-      # end
     end
   end
 
-
-  ##
-  # On Testing:
-  #  I've opted to not write tests for this
-  #  due to the simple nature it's currently in.
-  #  If this becomes more complex in even the
-  #  least amount, find me (blake) and I'll
-  #  help get tests in.
   class AllCheck < Check
 
     def call!
@@ -534,7 +511,7 @@ module Conify
       response = data[:provision_response]
 
       data.merge!(id: response['id'])
-      config = response["config"] || Hash.new
+      configs = response['configs'] || []
 
       data[:plan] ||= 'foo'
       run PlanChangeCheck, data
