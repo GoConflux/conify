@@ -1,9 +1,9 @@
 require 'conify/api/abstract_api'
 
-class Conify::Api::Services < Conify::Api::AbstractApi
+class Conify::Api::Addons < Conify::Api::AbstractApi
 
   def extension
-    '/services'
+    '/addons'
   end
 
   # Push draft service to Conflux

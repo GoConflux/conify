@@ -4,8 +4,6 @@ module Conify
   module Manifest
     extend self
 
-    REGIONS = ['us']
-
     def password_gen(size = 8)
       SecureRandom.hex(size)
     end
@@ -27,7 +25,6 @@ module Conify
     ],
     "password": "#{password_gen}",
     "sso_salt": "#{password_gen}",
-    "regions": ["us"],
     "production": {
       "base_url": "https://yourapp.com/conflux/resources",
       "sso_url": "https://yourapp.com/conflux/sso"
@@ -36,8 +33,7 @@ module Conify
       "base_url": "http://localhost:#{default_port}/conflux/resources",
       "sso_url": "http://localhost:#{default_port}/conflux/sso"
     }
-  },
-  "plans": []
+  }
 }
       JSON
     end

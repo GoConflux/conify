@@ -13,7 +13,6 @@ class Conify::AllTest < Conify::Test
 
     response = data[:provision_response]
     data.merge!(id: response['id'])
-    data[:plan] ||= 'foo'
 
     run(Conify::PlanChangeTest, data)
     run(Conify::SsoTest, data)

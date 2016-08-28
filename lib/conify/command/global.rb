@@ -3,7 +3,7 @@ require 'conify/manifest'
 require 'conify/test/all_test'
 require 'conify/test/manifest_test'
 require 'conify/api/users'
-require 'conify/api/services'
+require 'conify/api/addons'
 
 class Conify::Command::Global < Conify::Command::AbstractCommand
 
@@ -60,7 +60,7 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
     auth_resp = Conify::Api::Users.new.login(creds)
 
     # Push new service to Conflux
-    push_resp = Conify::Api::Services.new.push(manifest_content, auth_resp['user_token'])
+    push_resp = Conify::Api::Addons.new.push(manifest_content, auth_resp['user_token'])
 
     display "Successfully pushed draft service to Conflux!\nVisit #{push_resp['url']} to complete the submission process."
   end

@@ -1,5 +1,4 @@
 require 'conify/test'
-require 'conify/manifest'
 
 class Conify::ManifestTest < Conify::Test
 
@@ -24,18 +23,6 @@ class Conify::ManifestTest < Conify::Test
 
     test 'api is a hash' do
       data['api'].is_a?(Hash)
-    end
-
-    test 'api has a list of regions' do
-      data['api'].has_key?('regions') && data['api']['regions'].is_a?(Array)
-    end
-
-    test 'api contains at least the US region' do
-      data['api']['regions'].include?('us') || data['api']['regions'].include?('*')
-    end
-
-    test 'api contains only valid region names' do
-      data['api']['regions'].all? { |reg| Conify::Manifest::REGIONS.include? reg }
     end
 
     test 'api contains password' do

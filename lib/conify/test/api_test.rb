@@ -14,7 +14,7 @@ class Conify::ApiTest < Conify::Test
   end
 
   def conflux_id
-    "app#{rand(10000)}@conify.conflux.com"
+    "app#{rand(10000)}@conify.goconflux.com"
   end
 
   def credentials
@@ -32,10 +32,9 @@ class Conify::ApiTest < Conify::Test
   def create_provision_payload
     payload = {
       conflux_id: conflux_id,
-      plan: data[:plan] || 'test',
+      plan: 'test',
       callback_url: callback,
       logplex_token: nil,
-      region: 'amazon-web-services::us-east-1',
       options: data[:options] || {},
       uuid: SecureRandom.uuid
     }

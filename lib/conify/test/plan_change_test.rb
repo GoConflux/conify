@@ -6,13 +6,10 @@ class Conify::PlanChangeTest < Conify::ApiTest
 
   def call!
     id = data[:id]
-    new_plan = data[:plan]
-
     raise ArgumentError, 'Plan Change Test: No id specified' if id.nil?
-    raise ArgumentError, 'Plan Change Test: No plan specified' if new_plan.nil?
 
     path = "#{base_path}/#{CGI::escape(id.to_s)}"
-    payload = { plan: new_plan, conflux_id: conflux_id }
+    payload = { plan: 'new_plan', conflux_id: conflux_id }
 
     test 'response' do
       payload[:uuid] = SecureRandom.uuid
