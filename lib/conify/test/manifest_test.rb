@@ -29,6 +29,10 @@ class Conify::ManifestTest < Conify::Test
       data['api'].has_key?('password') && data['api']['password'] != ''
     end
 
+    test 'api contains sso_salt' do
+      data['api'].has_key?('sso_salt') && data['api']['sso_salt'] != ''
+    end
+
     test 'api contains test url' do
       data['api'].has_key?('test')
     end

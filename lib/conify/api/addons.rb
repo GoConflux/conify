@@ -8,7 +8,7 @@ class Conify::Api::Addons < Conify::Api::AbstractApi
 
   # Push draft service to Conflux
   def push(manifest, token)
-    get("#{extension}/push", data: manifest, headers: { 'Conflux-User' => token })
+    post("#{extension}/push", data: { manifest: manifest }, headers: { 'Conflux-User' => token })
   end
 
 end
