@@ -3,10 +3,10 @@ require 'uri'
 
 module Conify
   class Sso
-    attr_accessor :uuid, :url, :proxy_port, :timestamp, :token
+    attr_accessor :id, :url, :proxy_port, :timestamp, :token
 
     def initialize(data)
-      @uuid = data[:id]
+      @id = data[:id]
       @salt = data['api']['sso_salt']
       env = data.fetch('env', 'test')
 
@@ -22,7 +22,7 @@ module Conify
     end
 
     def path
-      self.POST? ? URI.parse(url).path : "/conflux/resources/#{uuid}"
+      self.POST? ? URI.parse(url).path : "/conflux/resources/#{id}"
     end
 
     def POST?
@@ -48,7 +48,7 @@ module Conify
     end
 
     def make_token(t)
-      Digest::SHA1.hexdigest([@uuid, @salt, t].join(':'))
+      Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
     end
 
     def querystring
@@ -68,7 +68,7 @@ module Conify
         'email' => 'username@example.com',
         'app' => 'myapp'
       }.tap do |params|
-        params.merge!('uuid' => @uuid) if self.POST?
+        params.merge!('id' => @id) if self.POST?
       end
     end
 
