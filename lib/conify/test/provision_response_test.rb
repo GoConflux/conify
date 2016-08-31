@@ -1,4 +1,5 @@
 require 'conify/test'
+require 'uri'
 
 class Conify::ProvisionResponseTest < Conify::Test
 
@@ -17,48 +18,41 @@ class Conify::ProvisionResponseTest < Conify::Test
       end
     end
 
-    if response.has_key?('configs')
-      test 'is an array' do
-        response['configs'].is_a?(Array)
+    if response.has_key?('config')
+      test 'is a hash' do
+        response['config'].is_a?(Hash)
       end
 
       test 'all config keys were previously defined in the manifest' do
-        response_config_keys = response['configs'].collect { |c| c['name'] }
-        manifest_config_keys = data['api']['config_vars'].collect { |c| c['name'] }
-        diff = response_config_keys - manifest_config_keys
-        error "The following keys are not in the manifest: #{diff.join(', ')}" if !diff.empty?
+        response['config'].keys.each do |key|
+          error "#{key} is not in the manifest" unless data['api']['config_vars'].include?(key)
+        end
         true
       end
 
       test 'all keys in the manifest are present' do
-        response_config_keys = response['configs'].collect { |c| c['name'] }
-        manifest_config_keys = data['api']['config_vars'].collect { |c| c['name'] }
-        diff = manifest_config_keys - response_config_keys
-
-        if !diff.empty?
-          error "The following keys that exist in the manifest were not returned: #{diff.join(', ')}"
+        difference = data['api']['config_vars'] - response['config'].keys
+        unless difference.empty?
+          verb = (difference.size == 1) ? 'is' : 'are'
+          error "Config(s) #{difference.join(', ')} #{verb} missing from the provision response"
         end
-
         true
       end
 
-      test 'all configs are hashes with String \'name\' and \'value\' keys' do
-        response['configs'].each do |c|
-          error "Config #{c} is not a hash..." unless c.is_a?(Hash)
-          error "Config #{c} does not contain the 'name' key" unless c.key?('name')
-          error "The 'name' key #{c["name"]} is not a string..." unless c['name'].is_a?(String)
-          error "Config #{c} does not contain the 'value' key" unless c.key?('value')
-          error "The 'name' key #{c["value"]} is not a string..." unless c['value'].is_a?(String)
-          true
+      test 'all config values are strings' do
+        response['config'].each do |k, v|
+          if v.is_a?(String)
+            true
+          else
+            error "the key #{k} doesn't contain a string (#{v.inspect})"
+          end
         end
       end
 
       test 'URL configs vars' do
-        response['configs'].each do |c|
-          next unless c['name'] =~ /_URL$/
-
+        response['config'].each do |key, value|
+          next unless key =~ /_URL$/
           begin
-            value = c['value']
             uri = URI.parse(value)
             error "#{value} is not a valid URI - missing host" unless uri.host
             error "#{value} is not a valid URI - missing scheme" unless uri.scheme

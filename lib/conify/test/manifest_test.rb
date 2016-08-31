@@ -60,14 +60,8 @@ class Conify::ManifestTest < Conify::Test
         data['api']['config_vars'].is_a?(Array)
       end
 
-      test 'all config vars are hashes' do
-        data['api']['config_vars'].each do |c|
-          error "Config #{c} is not a hash..." unless c.is_a?(Hash)
-        end
-      end
-
       test 'all config vars are uppercase strings' do
-        data['api']['config_vars'].collect{ |c| c['name'] }.each do |k|
+        data['api']['config_vars'].each do |k, v|
           if k =~ /^[A-Z][0-9A-Z_]+$/
             true
           else
@@ -77,8 +71,9 @@ class Conify::ManifestTest < Conify::Test
       end
 
       test 'all config vars are prefixed with the addon id' do
-        data['api']['config_vars'].collect{ |c| c['name'] }.each do |k|
-          prefix = data['api']['config_vars_prefix'] || data['id'].upcase.gsub('-', '_')
+        data['api']['config_vars'].each do |k|
+          prefix = data['id'].upcase.gsub('-', '_')
+
           if k =~ /^#{prefix}_/
             true
           else
@@ -87,6 +82,7 @@ class Conify::ManifestTest < Conify::Test
         end
       end
     end
+
   end
 
 end
