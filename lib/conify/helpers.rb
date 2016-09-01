@@ -178,5 +178,31 @@ module Conify
       JSON.parse(File.read(manifest_path)) rescue {}
     end
 
+    def kensa_manifest_path
+      File.join(Dir.pwd, kensa_manifest_name)
+    end
+
+    def kensa_manifest_name
+      'addon-manifest.json'
+    end
+
+    def exclusive_deep_merge(merge_to, merge_from)
+      merged = merge_to.clone
+
+      merge_from.each do |key, value|
+        # Only override existing key
+        if merged.keys.include?(key)
+          # Deep merge for nested hash
+          if value.is_a?(Hash) && merged[key].is_a?(Hash)
+            merged[key] = exclusive_deep_merge(merged[key], value)
+          else
+            merged[key] = value
+          end
+        end
+      end
+
+      merged
+    end
+
   end
 end
