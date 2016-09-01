@@ -5,14 +5,13 @@ class Conify::PlanChangeTest < Conify::ApiTest
   OUTPUT_COMPLETION = true
 
   def call!
-    id = data[:id]
-    raise ArgumentError, 'Plan Change Test: No id specified' if id.nil?
+    external_uuid = data[:external_uuid]
+    raise ArgumentError, 'Plan Change Test: No external_uuid specified' if external_uuid.nil?
 
-    path = "#{base_path}/#{CGI::escape(id.to_s)}"
-    payload = { plan: 'new_plan', conflux_id: conflux_id }
+    path = "#{base_path}/#{external_uuid.to_s}"
+    payload = { plan: 'new_plan', conflux_id: data[:external_username] }
 
     test 'response' do
-      payload[:uuid] = SecureRandom.uuid
       code, _ = put(credentials, path, payload)
 
       if code == 200
@@ -25,7 +24,6 @@ class Conify::PlanChangeTest < Conify::ApiTest
     end
 
     test 'authentication' do
-      payload[:uuid] = SecureRandom.uuid
       code, _ = put(invalid_creds, path, payload)
       error "Plan Change Test: expected 401, got #{code}" if code != 401
       true

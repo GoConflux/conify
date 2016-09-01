@@ -11,8 +11,9 @@ class Conify::AllTest < Conify::Test
     run(Conify::ManifestTest, data)
     run(Conify::ProvisionTest, data)
 
-    response = data[:provision_response]
-    data.merge!(id: response['id'])
+    # data[:provision_response] has already been set from the above test,
+    # so add 'external_uuid' returned from inside this hash to the data object.
+    data[:external_uuid] = data[:provision_response]['id']
 
     run(Conify::PlanChangeTest, data)
     run(Conify::SsoTest, data)

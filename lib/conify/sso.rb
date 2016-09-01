@@ -3,10 +3,11 @@ require 'uri'
 
 module Conify
   class Sso
-    attr_accessor :id, :url, :proxy_port, :timestamp, :token
+    attr_accessor :external_uuid, :url, :proxy_port, :timestamp, :token
 
     def initialize(data)
-      @id = data[:id]
+      @external_uuid = data[:external_uuid]
+      @external_username = data[:external_username]
       @salt = data['api']['sso_salt']
       env = data.fetch('env', 'test')
 
@@ -22,7 +23,7 @@ module Conify
     end
 
     def path
-      self.POST? ? URI.parse(url).path : "/conflux/resources/#{id}"
+      self.POST? ? URI.parse(url).path : "/conflux/resources/#{external_uuid}"
     end
 
     def POST?
@@ -48,7 +49,7 @@ module Conify
     end
 
     def make_token(t)
-      Digest::SHA1.hexdigest([@id, @salt, t].join(':'))
+      Digest::SHA1.hexdigest([external_uuid, @salt, t].join(':'))
     end
 
     def querystring
@@ -62,33 +63,11 @@ module Conify
 
     def query_params
       {
+        'id' => external_uuid,
         'token' => @token,
         'timestamp' => @timestamp.to_s,
-        'nav-data' => sample_nav_data,
-        'email' => 'username@example.com',
-        'app' => 'myapp'
-      }.tap do |params|
-        params.merge!('id' => @id) if self.POST?
-      end
-    end
-
-    def sample_nav_data
-      json = OkJson.encode({
-        'addon' => 'Your Addon',
-        'appname' => 'myapp',
-        'addons' => [
-          { 'slug' => 'cron', 'name' => 'Cron' },
-          { 'slug' => 'custom_domains+wildcard', 'name' => 'Custom Domains + Wildcard' },
-          { 'slug' => 'youraddon', 'name' => 'Your Addon', 'current' => true }
-        ]
-      })
-
-      base64_url_variant(json)
-    end
-
-    def base64_url_variant(text)
-      base64 = [text].pack('m').gsub('=', '').gsub("\n", '')
-      base64.tr('+/','-_')
+        'email' => @external_username
+      }
     end
 
     def message

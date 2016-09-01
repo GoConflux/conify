@@ -5,9 +5,9 @@ class Conify::DeprovisionTest < Conify::ApiTest
   OUTPUT_COMPLETION = true
 
   def call!
-    id = data[:id]
-    raise ArgumentError, 'Deprovision Test: No id specified' if id.nil?
-    path = "#{base_path}/#{CGI::escape(id.to_s)}"
+    external_uuid = data[:external_uuid]
+    raise ArgumentError, 'Deprovision Test: No external_uuid specified' if external_uuid.nil?
+    path = "#{base_path}/#{external_uuid.to_s}"
 
     test 'response' do
       code, _ = delete(credentials, path, nil)

@@ -35,7 +35,6 @@ class Conify::ApiTest < Conify::Test
       plan: 'test',
       callback_url: callback,
       logplex_token: nil,
-      options: data[:options] || {},
       uuid: SecureRandom.uuid
     }
 

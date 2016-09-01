@@ -11,12 +11,13 @@ class Conify::ProvisionTest < Conify::ApiTest
     response, code, json = nil
     payload = create_provision_payload
 
+    data[:external_username] = payload[:conflux_id] # store for later
+
     test 'response' do
-      payload[:uuid] = SecureRandom.uuid
       code, json = post(credentials, base_path, payload)
 
       if code == 200
-        # noop
+        # Good shit
       elsif code == -1
         error "Provision Test: unable to connect to #{url}"
       else
@@ -39,7 +40,6 @@ class Conify::ProvisionTest < Conify::ApiTest
     end
 
     test 'authentication' do
-      payload[:uuid] = SecureRandom.uuid
       code, _ = post(invalid_creds, base_path, payload)
       error "Provision Test: expected 401, got #{code}" if code != 401
       true
@@ -47,7 +47,7 @@ class Conify::ProvisionTest < Conify::ApiTest
 
     data[:provision_response] = response
 
-    run(Conify::ProvisionResponseTest, data.merge('conflux_id' => conflux_id))
+    run(Conify::ProvisionResponseTest, data)
     run(Conify::DuplicateProvisionTest, data) unless api_requires?('many_per_app')
   end
 
