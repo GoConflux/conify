@@ -1,6 +1,5 @@
 require 'conify/test/api_test'
 require 'conify/test/provision_response_test'
-require 'conify/test/duplicate_provision_test'
 require 'conify/okjson'
 
 class Conify::ProvisionTest < Conify::ApiTest
@@ -48,7 +47,6 @@ class Conify::ProvisionTest < Conify::ApiTest
     data[:provision_response] = response
 
     run(Conify::ProvisionResponseTest, data)
-    run(Conify::DuplicateProvisionTest, data) unless api_requires?('many_per_app')
   end
 
 end
