@@ -10,7 +10,7 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
   def init
     # Error out if conflux-manifest.json already exists
     if File.exists?(manifest_path)
-      error "File #{manifest_filename} already exists."
+      error "Manifest File #{manifest_filename} already exists."
     else
       begin
         # Create new conflux-manifest.json file from template
@@ -18,10 +18,13 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
           f.write(Conify::Manifest.template)
         end
 
-        display "Created new manifest at #{manifest_filename}"
+        display([
+          "Created new manifest template at #{manifest_filename}.",
+          "Modify it to your service's specs and then run 'conify test'."
+        ].join("\n"))
       rescue Exception => e
         File.delete(manifest_path) # Remove file if something screws up during file creation
-        display "Error initializing conify manifest: #{e0.message}"
+        display "Error initializing conify manifest: #{e.message}"
       end
     end
   end
@@ -29,7 +32,7 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
   def test
     begin
       # Get the content from conflux-manifest.json and add the 'env'
-      # key specifying which environment to test
+      # key specifying which environment to test.
       data = manifest_content
       data['env'] = (@args[0] === '--production') ? 'production' : 'test'
 
@@ -44,22 +47,22 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
   end
 
   def push
-    # First ensure manifest exists
+    # First ensure manifest exists.
     if !File.exists?(manifest_path)
       error "No Conflux manifest exists yet.\nRun 'conflux init' to create a new manifest."
     end
 
-    # Run Manifest Test to ensure file is valid
+    # Run Manifest Test to ensure file is valid.
     manifest_valid = Conify::ManifestTest.new(manifest_content).call
     exit(1) unless manifest_valid
 
-    # Request Conflux email/password creds
+    # Request Conflux email/password creds.
     creds = ask_for_conflux_creds
 
-    # Login to Conflux with these creds, returning a valid user-token
+    # Login to Conflux with these creds, returning a valid user-token.
     auth_resp = Conify::Api::Users.new.login(creds)
 
-    # Push new service to Conflux
+    # Push new service to Conflux.
     push_resp = Conify::Api::Addons.new.push(manifest_content, auth_resp['user_token'])
 
     display "Successfully pushed draft service to Conflux!\nVisit #{push_resp['url']} to complete the submission process."
