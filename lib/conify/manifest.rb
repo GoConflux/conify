@@ -36,7 +36,9 @@ module Conify
 {
   "id": "myservice",
   "api": {
-    "config_vars": ["MYSERVICE_URL"],
+    "config_vars": [
+      "MYSERVICE_URL"
+    ],
     "password": "",
     "sso_salt": "",
     "production": {
