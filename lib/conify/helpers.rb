@@ -161,6 +161,10 @@ module Conify
       ENV['CONFLUX_HOST'] || 'https://api.goconflux.com'
     end
 
+    def site_url
+      ENV['CONFLUX_SITE_URL'] || 'https://goconflux.com'
+    end
+
     # Get an array (of symbols) of the user-defined methods for a klass
     def manually_added_methods(klass)
       klass.instance_methods(false)
@@ -202,6 +206,17 @@ module Conify
       end
 
       merged
+    end
+
+    def open_url(url)
+      if running_on_a_mac?
+        system "open #{url}"
+      elsif running_on_windows?
+        system "explorer #{url}"
+      else
+        # Probably some flavor of Linux
+        system "xdg-open #{url}"
+      end
     end
 
   end

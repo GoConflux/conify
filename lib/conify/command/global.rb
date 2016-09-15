@@ -65,7 +65,21 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
     # Push new service to Conflux.
     push_resp = Conify::Api::Addons.new.push(manifest_content, auth_resp['user_token'])
 
-    display "Successfully pushed draft service to Conflux!\nVisit #{push_resp['url']} to complete the submission process."
+    display "Successfully pushed draft service to Conflux!\nRun 'conify open' to finish editing your service's information."
+  end
+
+  def open
+    # First ensure manifest exists.
+    if !File.exists?(manifest_path)
+      error "No Conflux manifest exists yet.\nRun 'conflux init' to create a new manifest."
+    end
+
+    service_id = manifest_content['id'] || ''
+    error 'Manifest must have an "id" field.' if service_id.empty?
+
+    edit_service_url = "#{site_url}/services/#{service_id}/edit"
+    display "Opening Conflux Service at: #{edit_service_url}"
+    open_url(edit_service_url)
   end
 
   #----------------------------------------------------------------------------
@@ -84,6 +98,11 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
 
     module Push
       DESCRIPTION = 'Push your draft service to Conflux'
+      VALID_ARGS = [ [] ]
+    end
+
+    module Open
+      DESCRIPTION = 'Open the url to edit your service on Conflux'
       VALID_ARGS = [ [] ]
     end
 

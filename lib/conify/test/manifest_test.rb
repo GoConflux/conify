@@ -41,19 +41,19 @@ class Conify::ManifestTest < Conify::Test
       data['api'].has_key?('production')
     end
 
-    if data['api']['production'].is_a?(Hash)
-      test 'production url uses SSL' do
-        data['api']['production']['base_url'] =~ /^https:/
-      end
-
-      test 'sso url uses SSL' do
-        data['api']['production']['sso_url'] =~ /^https:/
-      end
-    else
-      test 'production url uses SSL' do
-        data['api']['production'] =~ /^https:/
-      end
-    end
+    # if data['api']['production'].is_a?(Hash)
+    #   test 'production url uses SSL' do
+    #     data['api']['production']['base_url'] =~ /^https:/
+    #   end
+    #
+    #   test 'sso url uses SSL' do
+    #     data['api']['production']['sso_url'] =~ /^https:/
+    #   end
+    # else
+    #   test 'production url uses SSL' do
+    #     data['api']['production'] =~ /^https:/
+    #   end
+    # end
 
     if data['api'].has_key?('config_vars')
       test 'contains config_vars array' do
