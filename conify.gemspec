@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Conify::VERSION
   spec.authors       = ["Ben Whittle"]
   spec.email         = ["benwhittle31@gmail.com"]
-  spec.summary       = "A gem to help SaaS tools integrate their services with Conflux"
+  spec.summary       = "A gem to help developer tools integrate their services with Conflux"
   spec.homepage      = "https://www.github.com/GoConflux/conify"
   spec.license       = "MIT"
 
