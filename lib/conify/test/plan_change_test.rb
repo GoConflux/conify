@@ -4,7 +4,7 @@ class Conify::PlanChangeTest < Conify::ApiTest
 
   OUTPUT_COMPLETION = true
 
-  def call!
+  def call
     external_uuid = data[:external_uuid]
     raise ArgumentError, 'Plan Change Test: No external_uuid specified' if external_uuid.nil?
 

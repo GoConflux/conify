@@ -7,7 +7,7 @@ require 'conify/test/sso_test'
 
 class Conify::AllTest < Conify::Test
 
-  def call!
+  def call
     run(Conify::ManifestTest, data)
     run(Conify::ProvisionTest, data)
 

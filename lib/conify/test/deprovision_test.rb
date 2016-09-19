@@ -4,7 +4,7 @@ class Conify::DeprovisionTest < Conify::ApiTest
 
   OUTPUT_COMPLETION = true
 
-  def call!
+  def call
     external_uuid = data[:external_uuid]
     raise ArgumentError, 'Deprovision Test: No external_uuid specified' if external_uuid.nil?
     path = "#{base_path}/#{external_uuid.to_s}"

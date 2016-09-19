@@ -37,10 +37,9 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
       data['env'] = (@args[0] === '--production') ? 'production' : 'test'
 
       # Run all tests to ensure Conflux integration is set up correctly
-      all_tests_valid = Conify::AllTest.new(data).call
-      exit(1) unless all_tests_valid
+      Conify::AllTest.new(data).call
 
-      display 'Everything checks out!'
+      display "Everything checks out!\nRun 'conify push' to push your service to Conflux."
     rescue Exception => e
       display e.message
     end
@@ -53,8 +52,7 @@ class Conify::Command::Global < Conify::Command::AbstractCommand
     end
 
     # Run Manifest Test to ensure file is valid.
-    manifest_valid = Conify::ManifestTest.new(manifest_content).call
-    exit(1) unless manifest_valid
+    Conify::ManifestTest.new(manifest_content).call
 
     # Request Conflux email/password creds.
     creds = ask_for_conflux_creds

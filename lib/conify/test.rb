@@ -15,24 +15,20 @@ module Conify
     end
 
     def test(msg, &block)
-      raise "Test failed: #{msg}" unless block.call
+      raise "Failed: #{msg}" unless block.call
     end
 
     def run(klass, data)
-      klass.new(data).call
+      test_name = klass.to_s.gsub('Conify::', '').split(/(?=[A-Z])/).join(' ')
+
+      begin
+        klass.new(data).call
+      rescue Exception => e
+        error "#{test_name} #{e.message}"
+      end
 
       if klass.const_defined?('OUTPUT_COMPLETION') && klass.const_get('OUTPUT_COMPLETION')
-        test_name = klass.to_s.gsub('Conify::', '').split(/(?=[A-Z])/).join(' ')
         display "#{test_name}: Looks good..."
-      end
-    end
-
-    def call
-      begin
-        call!
-        true
-      rescue
-        false
       end
     end
 

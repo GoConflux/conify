@@ -4,7 +4,7 @@ class Conify::ManifestTest < Conify::Test
 
   OUTPUT_COMPLETION = true
 
-  def call!
+  def call
     test 'id key exists' do
       data.has_key?('id')
     end

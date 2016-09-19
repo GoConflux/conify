@@ -3,7 +3,7 @@ require 'uri'
 
 class Conify::ProvisionResponseTest < Conify::Test
 
-  def call!
+  def call
     response = data[:provision_response]
 
     test 'contains an id' do
@@ -11,7 +11,7 @@ class Conify::ProvisionResponseTest < Conify::Test
     end
 
     test 'id does not contain conflux_id' do
-      if response['id'].to_s.include? data['conflux_id'].scan(/app(\d+)@/).flatten.first
+      if response['id'].to_s.include? data[:external_username].scan(/app(\d+)@/).flatten.first
         error 'id cannot include conflux_id'
       else
         true

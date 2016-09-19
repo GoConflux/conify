@@ -29,7 +29,7 @@ class Conify::SsoTest < Conify::ApiTest
     super(*args)
   end
 
-  def call!
+  def call
     error 'SSO Test: Need an sso salt to perform sso test' unless data['api']['sso_salt']
 
     test 'validates token' do

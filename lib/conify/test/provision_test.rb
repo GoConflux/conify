@@ -6,7 +6,7 @@ class Conify::ProvisionTest < Conify::ApiTest
 
   OUTPUT_COMPLETION = true
 
-  def call!
+  def call
     response, code, json = nil
     payload = create_provision_payload
 
